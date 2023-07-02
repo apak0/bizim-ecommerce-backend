@@ -117,8 +117,9 @@ const Logout = async (req, res, next) => {
 
 		
 		const user_id = await verifyRefreshToken(refresh_token);
-		const data = await redis.del(user_id);
-
+		// const data = await redis.del(user_id);
+		const data = delete redis[user_id];
+		
 		if (!data) {
 			throw Boom.badRequest();
 		}

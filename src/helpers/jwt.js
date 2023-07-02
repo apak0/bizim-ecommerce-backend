@@ -1,7 +1,7 @@
 import JWT from "jsonwebtoken";
 import Boom from "boom";
 
-import redis from "../clients/redis";
+import { redis2 } from "../clients/redis";
 
 const signAccessToken = (data) => {
 	return new Promise((resolve, reject) => {
@@ -61,7 +61,8 @@ const signRefreshToken = (user_id) => {
 				reject(Boom.internal());
 			}
 
-			redis.set(user_id, token, "EX", 180 * 24 * 60 * 60);
+			// redis.set(user_id, token, "EX", 180 * 24 * 60 * 60);
+			redis2[user_id] = {token, exp: 180 * 24 * 60 * 60};
 
 			resolve(token);
 		});
@@ -79,7 +80,8 @@ const verifyRefreshToken = async (refresh_token) => {
 				}
 
 				const { user_id } = payload;
-				const user_token = await redis.get(user_id);
+				// const user_token = await redis.get(user_id);
+				const user_token = redis2[user_id].token
 
 				if (!user_token) {
 					return reject(Boom.unauthorized());
