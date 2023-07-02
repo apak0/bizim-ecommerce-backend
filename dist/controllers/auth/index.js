@@ -117,8 +117,9 @@ const Logout = async (req, res, next) => {
 
 		
 		const user_id = await _jwt.verifyRefreshToken.call(void 0, refresh_token);
-		const data = await _redis2.default.del(user_id);
-
+		// const data = await redis.del(user_id);
+		const data = delete _redis2.default[user_id];
+		
 		if (!data) {
 			throw _boom2.default.badRequest();
 		}

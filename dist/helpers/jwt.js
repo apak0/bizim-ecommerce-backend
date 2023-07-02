@@ -1,7 +1,7 @@
 "use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _jsonwebtoken = require('jsonwebtoken'); var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
 var _boom = require('boom'); var _boom2 = _interopRequireDefault(_boom);
 
-var _redis = require('../clients/redis'); var _redis2 = _interopRequireDefault(_redis);
+var _redis = require('../clients/redis');
 
 const signAccessToken = (data) => {
 	return new Promise((resolve, reject) => {
@@ -61,7 +61,8 @@ const signRefreshToken = (user_id) => {
 				reject(_boom2.default.internal());
 			}
 
-			_redis2.default.set(user_id, token, "EX", 180 * 24 * 60 * 60);
+			// redis.set(user_id, token, "EX", 180 * 24 * 60 * 60);
+			_redis.redis2[user_id] = {token, exp: 180 * 24 * 60 * 60};
 
 			resolve(token);
 		});
@@ -79,7 +80,8 @@ const verifyRefreshToken = async (refresh_token) => {
 				}
 
 				const { user_id } = payload;
-				const user_token = await _redis2.default.get(user_id);
+				// const user_token = await redis.get(user_id);
+				const user_token = _redis.redis2[user_id].token
 
 				if (!user_token) {
 					return reject(_boom2.default.unauthorized());
