@@ -3,13 +3,11 @@ import "./clients/db";
 import express from "express";
 import Boom from "boom";
 import cors from "cors";
-import limiter from "./rate-limiter";
 import routes from "./routes";
 
 const app = express();
 
 app.use(cors());
-app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,4 +29,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.listen(4000, () => console.log("Server is up!"));
+const PORT = 4000;
+app.listen(PORT, () =>
+  console.log("Server is up and running at:", `http://localhost:${PORT}`)
+);
